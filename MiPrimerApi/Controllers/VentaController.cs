@@ -14,6 +14,12 @@ namespace MiPrimerApi.Controllers
         {
             return VentaHandler.GetVentas();
         }
+
+        [HttpGet("{idUsuario}")]
+        public List<Venta> GetVentasByUserId(int idUsuario)
+        {
+            return VentaHandler.GetVentasByUserId(idUsuario);
+        }
     }
 
 }
