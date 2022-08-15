@@ -49,7 +49,7 @@ namespace MiPrimerApi.Repository
             using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
             {
                 using (SqlCommand sqlCommand = new SqlCommand(
-                    "SELECT * FROM Producto AS p INNER JOIN ProductoVendido AS pv ON p.Id = pv.IdProducto AND p.IdUsuario = @idUsuario", sqlConnection))
+                    "SELECT pv.* FROM Venta AS v INNER JOIN ProductoVendido AS pv ON v.Id=pv.IdVenta INNER JOIN Producto AS p ON pv.IdProducto = p.Id WHERE p.IdUsuario = @idUsuario", sqlConnection))
                 {
                     sqlConnection.Open();
                     sqlCommand.Parameters.AddWithValue("@idUsuario", idUsuario);
