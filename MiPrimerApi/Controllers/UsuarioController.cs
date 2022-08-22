@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MiPrimerApi.Controllers.DTOS;
 using MiPrimerApi.Model;
 using MiPrimerApi.Repository;
 
@@ -34,6 +35,38 @@ namespace MiPrimerApi.Controllers
         public List <Usuario> GetUsuariosByName(string nombreUsuario) 
         {
             return UsuarioHandler.GetUsuariosByName(nombreUsuario);
+        }
+
+        [HttpDelete]
+        public void DeleteUsuario([FromBody] int id)
+        {
+            UsuarioHandler.DeleteUsuario(id);
+        }
+
+        [HttpPut]
+
+        public bool UpdateUsuario([FromBody] PutUsuario usuario)
+        {
+            return UsuarioHandler.UpdateNombreUsuario(new Usuario
+            {
+                Id = usuario.Id,
+                Nombre = usuario.Nombre
+            });
+        }
+
+        [HttpPost]
+
+        public bool CreateUsuario([FromBody] PostUsuario usuario)
+        {
+            return UsuarioHandler.CreateUsuario(new Usuario
+            {
+
+                Apellido = usuario.Apellido,
+                Contraseña = usuario.Contraseña,
+                Mail = usuario.Mail,
+                Nombre = usuario.Nombre,
+                NombreUsuario = usuario.NombreUsuario
+            });
         }
 
     }

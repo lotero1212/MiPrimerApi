@@ -1,11 +1,11 @@
 ﻿using MiPrimerApi.Model;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace MiPrimerApi.Repository
 {
-    public static class VentaHandler
+    public class VentaHandler : DbHandler
     {
-        public const string ConnectionString = "Server=DESKTOP-8KQJS6D; Database=SistemaGestion;Trusted_Connection=True;Encrypt=False;";
         public static List<Venta> GetVentas()
         {
             List<Venta> ventas = new List<Venta>();
@@ -74,5 +74,114 @@ namespace MiPrimerApi.Repository
 
             return ventas;
         }
+
+        public static bool DeleteVenta(int id)
+        {
+            bool resultado = false;
+            using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
+            {
+                string queryDelete = "DELETE FROM Venta WHERE Id = @Id";
+                SqlParameter sqlParameter = new SqlParameter("Id", System.Data.SqlDbType.BigInt);
+                sqlParameter.Value = id;
+                sqlConnection.Open();
+
+                using (SqlCommand sqlCommand = new SqlCommand(queryDelete, sqlConnection))
+                {
+                    sqlCommand.Parameters.Add(sqlParameter);
+                    int numberOfRows = sqlCommand.ExecuteNonQuery();
+                    if (numberOfRows > 0)
+                    {
+                        resultado = true;
+                    }
+
+                }
+                sqlConnection.Close();
+
+            }
+
+            return resultado;
+        }
+        public static bool UpdateCommentVenta(Venta venta)
+        {
+            bool resultado = false;
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    string queryInsert = "UPDATE[SistemaGestion].[dbo].[Venta] SET Comentarios = @Comentarios WHERE Id = @Id";
+
+                    SqlParameter comentariosParameter = new SqlParameter("Comentarios", SqlDbType.VarChar) { Value = venta.Comentarios };
+                    SqlParameter idParameter = new SqlParameter("Id", SqlDbType.BigInt) { Value = venta.Id };
+
+
+
+                    sqlConnection.Open();
+
+                    using (SqlCommand sqlCommand = new SqlCommand(queryInsert, sqlConnection))
+                    {
+                        sqlCommand.Parameters.Add(comentariosParameter);
+                        sqlCommand.Parameters.Add(idParameter);
+
+
+                        int numberOfRows = sqlCommand.ExecuteNonQuery();
+
+                        if (numberOfRows > 0)
+                        {
+                            resultado = true;
+                        }
+                    }
+
+                    sqlConnection.Close();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return resultado;
+        }
+
+        public static bool CreateVenta(Venta venta)
+        {
+            bool resultado = false;
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    string queryInsert = "INSERT INTO [SistemaGestion].[dbo].[Venta] (Comentarios) VALUES (@Comentarios);";
+
+                    SqlParameter comentariosParameter = new SqlParameter("Comentarios", SqlDbType.VarChar) { Value = venta.Comentarios};
+
+
+
+                    sqlConnection.Open();
+
+                    using (SqlCommand sqlCommand = new SqlCommand(queryInsert, sqlConnection))
+                    {
+                        sqlCommand.Parameters.Add(comentariosParameter);
+
+
+                        int numberOfRows = sqlCommand.ExecuteNonQuery();
+
+                        if (numberOfRows > 0)
+                        {
+                            resultado = true;
+                        }
+                    }
+
+                    sqlConnection.Close();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return resultado;
+        }
+
     }
 }

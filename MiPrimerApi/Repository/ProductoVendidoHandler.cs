@@ -1,11 +1,11 @@
 ﻿using MiPrimerApi.Model;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace MiPrimerApi.Repository
 {
-    public static class ProductoVendidoHandler
+    public class ProductoVendidoHandler : DbHandler
     {
-        public const string ConnectionString = "Server=DESKTOP-8KQJS6D; Database=SistemaGestion;Trusted_Connection=True;Encrypt=False;";
         public static List<ProductoVendido> GetProductosVendidos()
         {
 
@@ -78,6 +78,118 @@ namespace MiPrimerApi.Repository
 
             return productosVendidos;
 
+        }
+
+        public static bool DeleteProductoVendido(int id)
+        {
+            bool resultado = false;
+            using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
+            {
+                string queryDelete = "DELETE FROM ProductoVendido WHERE Id = @Id";
+                SqlParameter sqlParameter = new SqlParameter("Id", System.Data.SqlDbType.BigInt);
+                sqlParameter.Value = id;
+                sqlConnection.Open();
+
+                using (SqlCommand sqlCommand = new SqlCommand(queryDelete, sqlConnection))
+                {
+                    sqlCommand.Parameters.Add(sqlParameter);
+                    int numberOfRows = sqlCommand.ExecuteNonQuery();
+                    if (numberOfRows > 0)
+                    {
+                        resultado = true;
+                    }
+
+                }
+                sqlConnection.Close();
+
+            }
+
+            return resultado;
+        }
+
+        public static bool UpdateStockProductoVendido(ProductoVendido productoVendido)
+        {
+            bool resultado = false;
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    string queryInsert = "UPDATE[SistemaGestion].[dbo].[ProductoVendido] SET Stock = @Stock WHERE Id = @Id";
+
+                    SqlParameter stockParameter = new SqlParameter("Stock", SqlDbType.VarChar) { Value = productoVendido.Stock };
+                    SqlParameter idParameter = new SqlParameter("Id", SqlDbType.BigInt) { Value = productoVendido.Id };
+
+
+
+                    sqlConnection.Open();
+
+                    using (SqlCommand sqlCommand = new SqlCommand(queryInsert, sqlConnection))
+                    {
+                        sqlCommand.Parameters.Add(stockParameter);
+                        sqlCommand.Parameters.Add(idParameter);
+
+
+                        int numberOfRows = sqlCommand.ExecuteNonQuery();
+
+                        if (numberOfRows > 0)
+                        {
+                            resultado = true;
+                        }
+                    }
+
+                    sqlConnection.Close();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return resultado;
+        }
+
+        public static bool CreateProductoVendido(ProductoVendido productoVendido)
+        {
+            bool resultado = false;
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    string queryInsert = "INSERT INTO [SistemaGestion].[dbo].[ProductoVendido] (IdProducto, Stock, IdVenta) VALUES (@IdProducto, @Stock, @IdVenta);";
+
+                    SqlParameter idProductoParameter = new SqlParameter("IdProducto", SqlDbType.VarChar) { Value = productoVendido.IdProducto};
+                    SqlParameter stockParameter = new SqlParameter("Stock", SqlDbType.Money) { Value = productoVendido.Stock};
+                    SqlParameter idVentaParameter = new SqlParameter("IdVenta", SqlDbType.Money) { Value = productoVendido.IdVenta};
+
+
+
+                    sqlConnection.Open();
+
+                    using (SqlCommand sqlCommand = new SqlCommand(queryInsert, sqlConnection))
+                    {
+                        sqlCommand.Parameters.Add(idProductoParameter);
+                        sqlCommand.Parameters.Add(stockParameter);
+                        sqlCommand.Parameters.Add(idVentaParameter);
+
+                        int numberOfRows = sqlCommand.ExecuteNonQuery();
+
+                        if (numberOfRows > 0)
+                        {
+                            resultado = true;
+                        }
+                    }
+
+                    sqlConnection.Close();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return resultado;
         }
 
     }
